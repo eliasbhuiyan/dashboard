@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Package, 
@@ -16,8 +16,10 @@ import {
   LogOut,
   ChevronDown
 } from 'lucide-react';
+import { useSelector } from 'react-redux';
 
-const Layout = ({ children }) => {
+const Layout = () => {
+  const userData = useSelector((state) => state.authSlice.user)
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const location = useLocation();
@@ -32,6 +34,10 @@ const Layout = ({ children }) => {
     { name: 'Customers', href: '/customers', icon: Users },
     { name: 'Employees', href: '/employees', icon: Users },
   ];
+
+  if(!userData){
+    return <Navigate to="/login"/>
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -152,7 +158,7 @@ const Layout = ({ children }) => {
         {/* Page content */}
         <main className="py-6">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            {children}
+            <Outlet/>
           </div>
         </main>
       </div>
