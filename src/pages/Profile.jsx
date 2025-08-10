@@ -20,39 +20,42 @@ import {
   AlertCircle
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useSelector } from 'react-redux';
 
 const Profile = () => {
+  const userData = useSelector((state)=> state.authSlice.user)
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [activeTab, setActiveTab] = useState('personal');
-
+  console.log(userData);
+  
   // Mock user data
-  const [userData, setUserData] = useState({
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@company.com',
-    phone: '+1 (555) 123-4567',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop',
-    role: 'Admin',
-    department: 'Management',
-    location: 'New York, NY',
-    timezone: 'America/New_York',
-    language: 'English',
-    bio: 'Experienced e-commerce administrator with 5+ years of experience managing online stores and customer relationships.',
-    joinedDate: '2023-01-15',
-    lastLogin: '2024-01-15 10:30:00',
-    notifications: {
-      email: true,
-      push: true,
-      sms: false,
-      orderUpdates: true,
-      customerMessages: true,
-      systemAlerts: false
-    }
-  });
+  // const [userData, setUserData] = useState({
+  //   firstName: 'John',
+  //   lastName: 'Doe',
+  //   email: 'john.doe@company.com',
+  //   phone: '+1 (555) 123-4567',
+  //   avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop',
+  //   role: 'Admin',
+  //   department: 'Management',
+  //   location: 'New York, NY',
+  //   timezone: 'America/New_York',
+  //   language: 'English',
+  //   bio: 'Experienced e-commerce administrator with 5+ years of experience managing online stores and customer relationships.',
+  //   joinedDate: '2023-01-15',
+  //   lastLogin: '2024-01-15 10:30:00',
+  //   notifications: {
+  //     email: true,
+  //     push: true,
+  //     sms: false,
+  //     orderUpdates: true,
+  //     customerMessages: true,
+  //     systemAlerts: false
+  //   }
+  // });
 
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
@@ -60,74 +63,74 @@ const Profile = () => {
     confirmPassword: ''
   });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUserData(prev => ({ ...prev, [name]: value }));
-  };
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setUserData(prev => ({ ...prev, [name]: value }));
+  // };
 
-  const handlePasswordChange = (e) => {
-    const { name, value } = e.target;
-    setPasswordData(prev => ({ ...prev, [name]: value }));
-  };
+  // const handlePasswordChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setPasswordData(prev => ({ ...prev, [name]: value }));
+  // };
 
-  const handleNotificationChange = (key) => {
-    setUserData(prev => ({
-      ...prev,
-      notifications: {
-        ...prev.notifications,
-        [key]: !prev.notifications[key]
-      }
-    }));
-  };
+  // const handleNotificationChange = (key) => {
+  //   setUserData(prev => ({
+  //     ...prev,
+  //     notifications: {
+  //       ...prev.notifications,
+  //       [key]: !prev.notifications[key]
+  //     }
+  //   }));
+  // };
 
-  const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setUserData(prev => ({ ...prev, avatar: e.target.result }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  // const handleAvatarChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     reader.onload = (e) => {
+  //       setUserData(prev => ({ ...prev, avatar: e.target.result }));
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
 
-  const handleSaveProfile = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  // const handleSaveProfile = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      toast.success('Profile updated successfully!');
-      setLoading(false);
-    }, 1000);
-  };
+  //   // Simulate API call
+  //   setTimeout(() => {
+  //     toast.success('Profile updated successfully!');
+  //     setLoading(false);
+  //   }, 1000);
+  // };
 
-  const handleChangePassword = async (e) => {
-    e.preventDefault();
+  // const handleChangePassword = async (e) => {
+  //   e.preventDefault();
     
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      toast.error('New passwords do not match');
-      return;
-    }
+  //   if (passwordData.newPassword !== passwordData.confirmPassword) {
+  //     toast.error('New passwords do not match');
+  //     return;
+  //   }
     
-    if (passwordData.newPassword.length < 8) {
-      toast.error('Password must be at least 8 characters long');
-      return;
-    }
+  //   if (passwordData.newPassword.length < 8) {
+  //     toast.error('Password must be at least 8 characters long');
+  //     return;
+  //   }
     
-    setLoading(true);
+  //   setLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      toast.success('Password changed successfully!');
-      setPasswordData({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: ''
-      });
-      setLoading(false);
-    }, 1000);
-  };
+  //   // Simulate API call
+  //   setTimeout(() => {
+  //     toast.success('Password changed successfully!');
+  //     setPasswordData({
+  //       currentPassword: '',
+  //       newPassword: '',
+  //       confirmPassword: ''
+  //     });
+  //     setLoading(false);
+  //   }, 1000);
+  // };
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -163,26 +166,34 @@ const Profile = () => {
           <div className="card">
             <div className="text-center">
               <div className="relative inline-block">
-                <img
-                  src={userData.avatar}
-                  alt="Profile"
-                  className="h-24 w-24 rounded-full object-cover mx-auto mb-4"
-                />
+                {
+                  userData?.avatar
+                  ?
+                  <img
+                    src={userData.avatar}
+                    alt="Profile"
+                    className="h-24 w-24 rounded-full object-cover mx-auto mb-4"
+                  />
+                  :
+                  <h2 className="h-24 w-24 rounded-full border bg-green-500 text-white flex justify-center items-center text-3xl mx-auto mb-4">
+                    {userData.fullName[0]}
+                  </h2>
+                }
                 <label className="absolute bottom-0 right-0 bg-primary-600 text-white p-2 rounded-full cursor-pointer hover:bg-primary-700 transition-colors">
                   <Camera className="h-4 w-4" />
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={handleAvatarChange}
+                    // onChange={handleAvatarChange}
                     className="hidden"
                   />
                 </label>
               </div>
               
               <h2 className="text-xl font-bold text-gray-900 mb-1">
-                {userData.firstName} {userData.lastName}
+                {userData.fullName}
               </h2>
-              <p className="text-gray-600 mb-2">{userData.role}</p>
+              <p className="text-green-600 mb-2">{userData.role}</p>
               <p className="text-sm text-gray-500 mb-4">{userData.department}</p>
               
               <div className="space-y-2 text-sm">
@@ -191,47 +202,22 @@ const Profile = () => {
                   <span className="text-gray-600">{userData.email}</span>
                 </div>
                 <div className="flex items-center justify-center space-x-2">
-                  <MapPin className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-600">{userData.location}</span>
-                </div>
-                <div className="flex items-center justify-center space-x-2">
                   <Calendar className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-600">Joined {formatDate(userData.joinedDate)}</span>
+                  <span className="text-gray-600">Joined {formatDate(userData.createdAt)}</span>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Account Stats */}
-          <div className="card mt-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Account Information</h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Last Login</span>
-                <span className="text-sm text-gray-900">{formatDateTime(userData.lastLogin)}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Timezone</span>
-                <span className="text-sm text-gray-900">{userData.timezone}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Language</span>
-                <span className="text-sm text-gray-900">{userData.language}</span>
               </div>
             </div>
           </div>
         </div>
-
         {/* Main Content */}
         <div className="lg:col-span-2">
           {/* Tabs */}
           <div className="card">
             <div className="border-b border-gray-200">
-              <nav className="-mb-px flex space-x-8">
+              <nav className="-mb-px flex space-x-8 justify-center">
                 {[
                   { id: 'personal', label: 'Personal Info', icon: User },
-                  { id: 'security', label: 'Security', icon: Shield },
-                  { id: 'notifications', label: 'Notifications', icon: Bell }
+                  { id: 'security', label: 'Security', icon: Shield }
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -252,7 +238,9 @@ const Profile = () => {
             <div className="mt-6">
               {/* Personal Information Tab */}
               {activeTab === 'personal' && (
-                <form onSubmit={handleSaveProfile} className="space-y-6">
+                <form
+                //  onSubmit={handleSaveProfile}
+                  className="space-y-6">
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -261,8 +249,8 @@ const Profile = () => {
                       <input
                         type="text"
                         name="firstName"
-                        value={userData.firstName}
-                        onChange={handleInputChange}
+                        value={userData.fullName.split(" ")[0]}
+                        // onChange={handleInputChange}
                         className="input-field"
                         required
                       />
@@ -274,8 +262,8 @@ const Profile = () => {
                       <input
                         type="text"
                         name="lastName"
-                        value={userData.lastName}
-                        onChange={handleInputChange}
+                        value={userData.fullName.split(" ")[1]}
+                        // onChange={handleInputChange}
                         className="input-field"
                         required
                       />
@@ -288,7 +276,7 @@ const Profile = () => {
                         type="email"
                         name="email"
                         value={userData.email}
-                        onChange={handleInputChange}
+                        // onChange={handleInputChange}
                         className="input-field"
                         required
                       />
@@ -301,7 +289,7 @@ const Profile = () => {
                         type="tel"
                         name="phone"
                         value={userData.phone}
-                        onChange={handleInputChange}
+                        // onChange={handleInputChange}
                         className="input-field"
                       />
                     </div>
@@ -312,9 +300,9 @@ const Profile = () => {
                       <input
                         type="text"
                         name="department"
-                        value={userData.department}
-                        onChange={handleInputChange}
-                        className="input-field"
+                        value={userData.role}
+                        // onChange={handleInputChange}
+                        className="input-field capitalize"
                       />
                     </div>
                     <div>
@@ -324,8 +312,8 @@ const Profile = () => {
                       <input
                         type="text"
                         name="location"
-                        value={userData.location}
-                        onChange={handleInputChange}
+                        value={userData?.location}
+                        // onChange={handleInputChange}
                         className="input-field"
                       />
                     </div>
@@ -336,7 +324,7 @@ const Profile = () => {
                       <textarea
                         name="bio"
                         value={userData.bio}
-                        onChange={handleInputChange}
+                        // onChange={handleInputChange}
                         rows={4}
                         className="input-field"
                       />
@@ -350,7 +338,7 @@ const Profile = () => {
                       className="btn-primary inline-flex items-center"
                     >
                       <Save className="h-4 w-4 mr-2" />
-                      {loading ? 'Saving...' : 'Save Changes'}
+                      {loading ? 'Saving...' : 'Update'}
                     </button>
                   </div>
                 </form>
@@ -358,7 +346,9 @@ const Profile = () => {
 
               {/* Security Tab */}
               {activeTab === 'security' && (
-                <form onSubmit={handleChangePassword} className="space-y-6">
+                <form 
+                // onSubmit={handleChangePassword}
+                 className="space-y-6">
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -369,13 +359,13 @@ const Profile = () => {
                           type={showPassword ? 'text' : 'password'}
                           name="currentPassword"
                           value={passwordData.currentPassword}
-                          onChange={handlePasswordChange}
+                          // onChange={handlePasswordChange}
                           className="input-field pr-10"
                           required
                         />
                         <button
                           type="button"
-                          onClick={() => setShowPassword(!showPassword)}
+                          // onClick={() => setShowPassword(!showPassword)}
                           className="absolute inset-y-0 right-0 pr-3 flex items-center"
                         >
                           {showPassword ? (
@@ -396,13 +386,13 @@ const Profile = () => {
                           type={showNewPassword ? 'text' : 'password'}
                           name="newPassword"
                           value={passwordData.newPassword}
-                          onChange={handlePasswordChange}
+                          // onChange={handlePasswordChange}
                           className="input-field pr-10"
                           required
                         />
                         <button
                           type="button"
-                          onClick={() => setShowNewPassword(!showNewPassword)}
+                          // onClick={() => setShowNewPassword(!showNewPassword)}
                           className="absolute inset-y-0 right-0 pr-3 flex items-center"
                         >
                           {showNewPassword ? (
@@ -423,13 +413,13 @@ const Profile = () => {
                           type={showConfirmPassword ? 'text' : 'password'}
                           name="confirmPassword"
                           value={passwordData.confirmPassword}
-                          onChange={handlePasswordChange}
+                          // onChange={handlePasswordChange}
                           className="input-field pr-10"
                           required
                         />
                         <button
                           type="button"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          // onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                           className="absolute inset-y-0 right-0 pr-3 flex items-center"
                         >
                           {showConfirmPassword ? (
@@ -468,87 +458,6 @@ const Profile = () => {
                     </button>
                   </div>
                 </form>
-              )}
-
-              {/* Notifications Tab */}
-              {activeTab === 'notifications' && (
-                <div className="space-y-6">
-                  <div className="space-y-4">
-                    <h4 className="text-sm font-medium text-gray-900">Email Notifications</h4>
-                    {[
-                      { key: 'email', label: 'Email notifications', description: 'Receive notifications via email' },
-                      { key: 'orderUpdates', label: 'Order updates', description: 'Get notified about order status changes' },
-                      { key: 'customerMessages', label: 'Customer messages', description: 'Receive notifications for new customer messages' },
-                      { key: 'systemAlerts', label: 'System alerts', description: 'Get important system notifications' }
-                    ].map((notification) => (
-                      <div key={notification.key} className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">{notification.label}</p>
-                          <p className="text-sm text-gray-500">{notification.description}</p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleNotificationChange(notification.key)}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                            userData.notifications[notification.key]
-                              ? 'bg-primary-600'
-                              : 'bg-gray-200'
-                          }`}
-                        >
-                          <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                              userData.notifications[notification.key]
-                                ? 'translate-x-6'
-                                : 'translate-x-1'
-                            }`}
-                          />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <h4 className="text-sm font-medium text-gray-900">Push Notifications</h4>
-                    {[
-                      { key: 'push', label: 'Push notifications', description: 'Receive notifications in your browser' },
-                      { key: 'sms', label: 'SMS notifications', description: 'Receive notifications via SMS' }
-                    ].map((notification) => (
-                      <div key={notification.key} className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">{notification.label}</p>
-                          <p className="text-sm text-gray-500">{notification.description}</p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleNotificationChange(notification.key)}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                            userData.notifications[notification.key]
-                              ? 'bg-primary-600'
-                              : 'bg-gray-200'
-                          }`}
-                        >
-                          <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                              userData.notifications[notification.key]
-                                ? 'translate-x-6'
-                                : 'translate-x-1'
-                            }`}
-                          />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className="flex justify-end">
-                    <button
-                      onClick={() => toast.success('Notification settings saved!')}
-                      className="btn-primary inline-flex items-center"
-                    >
-                      <Save className="h-4 w-4 mr-2" />
-                      Save Settings
-                    </button>
-                  </div>
-                </div>
               )}
             </div>
           </div>

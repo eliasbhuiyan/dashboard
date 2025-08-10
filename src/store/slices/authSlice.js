@@ -23,6 +23,7 @@ const authSlice = createSlice({
   reducers: {
     loggedUser: (state, actions) => {
       state.user = actions.payload;
+      
     },
     logOutUser: (state) => {
       console.log(state.value);

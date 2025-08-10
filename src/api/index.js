@@ -9,7 +9,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (token) {
       config.headers.Authorization = token;
     }
@@ -33,7 +33,7 @@ export const authServices = {
   loginUser: async (userData) => {
     const res = await api.post("/auth/login", userData);
     if (res.data.accessToken) {
-      localStorage.setItem("token", res.data.accessToken);
+      sessionStorage.setItem("token", res.data.accessToken);
       localStorage.setItem("loggedUser", JSON.stringify(res.data.user));
     }
     return res.data;
@@ -49,7 +49,16 @@ export const authServices = {
 };
 
 export const categorySercice = {
-    createCategory: async ()=>{
-        // 
+    createCategory: async (data)=>{
+      const res = await api.post("/product/createcategory", data,{
+        headers: {
+         "Content-Type": "multipart/form-data",
+       },
+      });
+      return res.data;
+    },
+    categoryList: async ()=>{
+      const res = await api.get("/product/categories")
+      return res.data;
     }
 }
