@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { 
   DollarSign, 
   Users, 
@@ -8,10 +8,13 @@ import {
   Star
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { categorySercice } from '../api';
+import { useDispatch } from 'react-redux';
+import { categories } from '../store/slices/categorySlice';
 
 const Dashboard = () => {
   const [timeRange, setTimeRange] = useState('7d');
-
+  const dispatch = useDispatch()
   // Mock data for sales chart
   const salesData = [
     { date: 'Mon', sales: 1200 },
@@ -89,6 +92,13 @@ const Dashboard = () => {
       icon: TrendingUp
     }
   ];
+
+   useEffect(()=>{
+      (async()=>{
+        const data = await categorySercice.categoryList()
+        dispatch(categories(data))
+      })()
+    }, [])
 
   return (
     <div className="space-y-6">

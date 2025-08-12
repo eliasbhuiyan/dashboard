@@ -62,3 +62,14 @@ export const categorySercice = {
       return res.data;
     }
 }
+
+export const productServices = {
+  createProduct: async (data)=>{
+    const res = await api.post("/product/create", data,{
+        headers: {
+         "Content-Type": "multipart/form-data",
+       },
+      });
+    return res.data;
+  }
+}

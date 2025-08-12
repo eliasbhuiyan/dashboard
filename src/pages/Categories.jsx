@@ -17,13 +17,10 @@ import { categorySercice } from '../api';
 
 const Categories = () => {
   const userData = useSelector((state)=> state.authSlice.user)
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
   const [addCategoryModal, setAddCategoryModal] = useState(false);
-  const [categories, setCategories] = useState([])
+  const categories = useSelector((state)=> state.categorySlice.categories)
 
-  const statuses = ['active', 'inactive', 'draft'];
-
+ 
   // const filteredCategories = categories.filter(category => {
   //   const matchesSearch = category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
   //                        category.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -31,13 +28,6 @@ const Categories = () => {
     
   //   return matchesSearch && matchesStatus;
   // });
-
-  useEffect(()=>{
-    (async()=>{
-      const data = await categorySercice.categoryList()
-      setCategories(data);
-    })()
-  })
  
   const getStatusBadge = (status) => {
     const statusClasses = {
