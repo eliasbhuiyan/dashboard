@@ -3,41 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Upload, X, Plus, Save } from "lucide-react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
+import { productServices } from "../api";
 
 const AddProduct = () => {
-  const categoriesData = useSelector((state) => state.categorySlice.categories);
-  const [variableOption, setVariableOption] = useState("");
-  const [colorInput, setColorInput] = useState("");
-  const [colorname, setcolorname] = useState([]);
-  const [sizeOptions, setSizeOptions] = useState([])
-  const [sizeData, setSizeData] = useState({
-    size:"",
-    additionalPrice: 0
-   })
-  const handleKeyDown = (e) => {
-    if ((e.key === "Enter" || e.key === ",") && colorInput.trim()) {
-      e.preventDefault();
-      const newTag = colorInput.trim();
-
-      // prevent duplicates
-      if (!colorname.includes(newTag)) {
-        setcolorname([...colorname, newTag]);
-      }
-
-      setColorInput("");
-    }
-  };
-
-  const removeTag = (indexToRemove) => {
-    setcolorname(colorname.filter((_, index) => index !== indexToRemove));
-  };
-
-  const handelAddSizeData = ()=>{       
-    setSizeOptions((prev)=> [...prev, sizeData])  
-  }
-  console.log(sizeOptions);
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  let [formData, setFormData] = useState({
     title: "",
     description: "",
     price: "",
@@ -47,21 +16,38 @@ const AddProduct = () => {
     images: [],
     variants: [],
   });
+  const [variants, setVariants] = useState([
+    {
+      name: "",
+      options: [
+        { additionalPrice: 0 }, // e.g. { colorname: 'Red', additionalPrice: 0 }
+      ],
+    },
+  ]);
+  const handleVariantNameChange = (index, value) => {
+    const newVariants = [...variants];
+    newVariants[index].name = value;
+    setVariants(newVariants);
+  };
 
-  const [newVariant, setNewVariant] = useState({
-    color: "",
-    size: "",
-    stock: "",
-  });
+  const handleOptionChange = (variantIndex, optionIndex, field, value) => {
+    const newVariants = [...variants];
+    newVariants[variantIndex].options[optionIndex][field] =
+      field === "additionalPrice" ? +value : value;
+    setVariants(newVariants);
+  };
 
-  const categories = [
-    "Electronics",
-    "Accessories",
-    "Clothing",
-    "Home & Garden",
-    "Sports",
-    "Books",
-  ];
+  const addVariant = () => {
+    setVariants([...variants, { name: "", options: [{ additionalPrice: 0 }] }]);
+  };
+
+  const addOption = (variantIndex) => {
+    const newVariants = [...variants];
+    newVariants[variantIndex].options.push({ additionalPrice: 0 });
+    setVariants(newVariants);
+  };
+  const navigate = useNavigate();
+  const categoriesData = useSelector((state) => state.categorySlice.categories);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -73,11 +59,12 @@ const AddProduct = () => {
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
-    const imageUrls = files.map((file) => URL.createObjectURL(file));
-
+    // const imageUrls = files.map((file) => file);
+    console.log(files);
+    
     setFormData((prev) => ({
       ...prev,
-      images: [...prev.images, ...imageUrls],
+      images: [...prev.images, ...files],
     }));
   };
 
@@ -88,24 +75,7 @@ const AddProduct = () => {
     }));
   };
 
-  const addVariant = () => {
-    if (newVariant.color && newVariant.size && newVariant.stock) {
-      setFormData((prev) => ({
-        ...prev,
-        variants: [...prev.variants, { ...newVariant }],
-      }));
-      setNewVariant({ color: "", size: "", stock: "" });
-    }
-  };
-
-  const removeVariant = (index) => {
-    setFormData((prev) => ({
-      ...prev,
-      variants: prev.variants.filter((_, i) => i !== index),
-    }));
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validation
@@ -113,11 +83,18 @@ const AddProduct = () => {
       toast.error("Please fill in all required fields");
       return;
     }
+
+    // console.log(variants);
+    formData.variants = variants;
+
     console.log(formData);
 
+    const res = await productServices.createProduct(formData)
+    console.log(res);
+    
     // Simulate API call
     toast.success("Product added successfully!");
-    navigate("/products");
+    // navigate("/products");
   };
 
   return (
@@ -245,24 +222,34 @@ const AddProduct = () => {
                     Main Image
                   </label>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                    <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600">
-                      Click to upload main image
-                    </p>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-                        if (file) {
-                          setFormData((prev) => ({
-                            ...prev,
-                            mainImg: URL.createObjectURL(file),
-                          }));
-                        }
-                      }}
-                    />
+                    {formData.mainImg ? (
+                      <img src={URL.createObjectURL(formData.mainImg)} />
+                    ) : (
+                      <>
+                        <label htmlFor="mainimge">
+                          <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                          <p className="text-sm text-gray-600">
+                            Click to upload main image
+                          </p>
+                        </label>
+                        <input
+                          id="mainimge"
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          name="mainImg"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              setFormData((prev) => ({
+                                ...prev,
+                                mainImg: file,
+                              }));
+                            }
+                          }}
+                        />
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -271,15 +258,20 @@ const AddProduct = () => {
                     Additional Images
                   </label>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                    <label htmlFor="subimg">
+
                     <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
                     <p className="text-sm text-gray-600">
                       Click to upload additional images
                     </p>
+                    </label>
                     <input
+                    id="subimg"
                       type="file"
                       accept="image/*"
                       multiple
                       className="hidden"
+                      name="images"
                       onChange={handleImageUpload}
                     />
                   </div>
@@ -289,7 +281,7 @@ const AddProduct = () => {
                       {formData.images.map((image, index) => (
                         <div key={index} className="relative">
                           <img
-                            src={image}
+                            src={URL.createObjectURL(image)}
                             alt={`Product ${index + 1}`}
                             className="w-full h-20 object-cover rounded"
                           />
@@ -314,23 +306,12 @@ const AddProduct = () => {
             <h3 className="text-lg font-medium text-gray-900 mb-4">
               Product Variants
             </h3>
-            {/* <div className='flex items-center justify-center gap-4 bg-primary-300 w-fit m-auto p-2 rounded-2xl'>
-              <button onClick={()=> setVariableOption("color")} className='px-6 py-2 bg-primary-700 text-white rounded-xl'>Color</button>
-              <button onClick={()=> setVariableOption("size")} className='px-6 py-2 bg-primary-700 text-white rounded-xl'>Size</button>
-            </div> */}
-            <div className="space-y-4">
+            {/* <div className="space-y-4">
               <div className="grid gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Type
                   </label>
-                  {/* <input
-                    type="text"
-                    value={newVariant.color}
-                    onChange={(e) => setNewVariant(prev => ({ ...prev, color: e.target.value }))}
-                    className="input-field"
-                    placeholder="e.g., Red"
-                  /> */}
                   <select
                     onChange={(e) => setVariableOption(e.target.value)}
                     className="input-field"
@@ -372,7 +353,17 @@ const AddProduct = () => {
                           Size
                         </label>
 
-                        <select onChange={(e)=> setSizeData((pre)=>({...pre, size: e.target.value}))} className="input-field" name="" id="">
+                        <select
+                          onChange={(e) =>
+                            setSizeData((pre) => ({
+                              ...pre,
+                              size: e.target.value,
+                            }))
+                          }
+                          className="input-field"
+                          name=""
+                          id=""
+                        >
                           <option hidden>Select Size</option>
                           <option value="s">S</option>
                           <option value="m">M</option>
@@ -398,62 +389,112 @@ const AddProduct = () => {
                         />
                       </div>
                     </div>
-                    <button 
-                    onClick={handelAddSizeData}
+                    <button
+                      onClick={handelAddSizeData}
                       type="button"
                       className="btn-secondary inline-flex items-center"
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Add Variant
                     </button>
-                      {
-                        sizeOptions.length > 0 &&
-                        sizeOptions.map((item)=>(
-                          <div className="flex items-center gap-3" key={item.size}>
-                            <div className="bg-slate-200 flex items-center gap-2">
-                              <p>Size</p> <p>{item.size}</p>
-                            </div>
-                            <div className="bg-slate-200 flex items-center gap-2">
-                              <p>Additional Price</p> <p>{item.additionalPrice}</p>
-                            </div>
+                    {sizeOptions.length > 0 &&
+                      sizeOptions.map((item) => (
+                        <div
+                          className="flex items-center gap-3"
+                          key={item.size}
+                        >
+                          <div className="bg-slate-200 flex items-center gap-2">
+                            <p>Size</p> <p>{item.size}</p>
                           </div>
-                        ))
-                      }
+                          <div className="bg-slate-200 flex items-center gap-2">
+                            <p>Additional Price</p>{" "}
+                            <p>{item.additionalPrice}</p>
+                          </div>
+                        </div>
+                      ))}
                   </>
                 )}
               </div>
+            </div> */}
+            <hr />
 
-              {formData.variants.length > 0 && (
-                <div className="space-y-2">
-                  <h4 className="font-medium text-gray-900">Added Variants:</h4>
-                  {formData.variants.map((variant, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <span className="text-sm font-medium">
-                          {variant.color}
-                        </span>
-                        <span className="text-sm text-gray-500">•</span>
-                        <span className="text-sm font-medium">
-                          {variant.size}
-                        </span>
-                        <span className="text-sm text-gray-500">•</span>
-                        <span className="text-sm">Stock: {variant.stock}</span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => removeVariant(index)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            {/* =================================================== */}
+            {variants.map((variant, vIndex) => (
+              <div key={vIndex} className="shadow p-2">
+                <h3>Variant #{vIndex + 1}</h3>
+                <select
+                  type="text"
+                  value={variant.name}
+                  onChange={(e) =>
+                    handleVariantNameChange(vIndex, e.target.value)
+                  }
+                  className="input-field"
+                  required
+                >
+                  <option hidden>Variant type</option>
+                  <option value="color">Color</option>
+                  <option value="size">Size</option>
+                </select>
+
+                {variant.options.map((option, oIndex) => (
+                  <div key={oIndex} style={{ marginTop: "10px" }}>
+                    <input
+                      className="input-field"
+                      type="text"
+                      placeholder={`Option name (e.g., ${
+                        variant.name === "color" ? "Red" : "S"
+                      })`}
+                      value={option[variant.name] || ""}
+                      onChange={(e) =>
+                        handleOptionChange(
+                          vIndex,
+                          oIndex,
+                          variant.name,
+                          e.target.value
+                        )
+                      }
+                      required
+                    />
+                    {variant.name === "size" && (
+                      <input
+                        className="input-field"
+                        type="number"
+                        placeholder="Additional Price"
+                        value={option.additionalPrice}
+                        onChange={(e) =>
+                          handleOptionChange(
+                            vIndex,
+                            oIndex,
+                            "additionalPrice",
+                            e.target.value
+                          )
+                        }
+                      />
+                    )}
+                  </div>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={() => addOption(vIndex)}
+                  style={{ marginTop: "10px" }}
+                  className="bg-slate-200 rounded-2xl px-2"
+                >
+                  + Add Option
+                </button>
+              </div>
+            ))}
+
+            <button
+              type="button"
+              onClick={addVariant}
+              className="bg-slate-600 text-white mt-4 rounded-2xl px-2"
+            >
+              + Add Variant
+            </button>
+            <br />
+            <br />
+            {/* =================================================== */}
           </div>
         </div>
 
