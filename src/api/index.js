@@ -71,5 +71,17 @@ export const productServices = {
        },
       });
     return res.data;
+  },
+  getAllProducts: async ()=>{
+    const res = await api.get("/product/productlist");
+    return res.data;
+  },
+  productDetails: async (slug)=>{
+    const res = await api.get(`/product/details/${slug}`);
+    return res.data;
+  },
+  createOrder: async (item)=>{
+    const res = await api.post(`/order/create`, {items: item});
+    return res.data;
   }
 }

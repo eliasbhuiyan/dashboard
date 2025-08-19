@@ -14,7 +14,7 @@ const AddProduct = () => {
     category: "",
     mainImg: "",
     images: [],
-    variants: [],
+    varients: [],
   });
   const [variants, setVariants] = useState([
     {
@@ -85,9 +85,9 @@ const AddProduct = () => {
     }
 
     // console.log(variants);
-    formData.variants = variants;
+    formData.varients = variants;
 
-    console.log(formData);
+    // console.log(formData);
 
     const res = await productServices.createProduct(formData)
     console.log(res);

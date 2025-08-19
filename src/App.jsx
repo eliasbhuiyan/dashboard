@@ -30,7 +30,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="/products" element={<Products />} />
           <Route path="/products/add" element={<AddProduct />} />
-          <Route path="/products/:id" element={<ProductDetails />} />
+          <Route path="/products/:slug" element={<ProductDetails />} />
           <Route path="/products/:id/edit" element={<EditProduct />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/categories/:id" element={<CategoryDetails />} />

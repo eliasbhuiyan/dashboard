@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
@@ -11,12 +11,23 @@ import {
   Eye,
   Star
 } from 'lucide-react';
-
+import { productServices } from '../api';
+import { loadStripe } from "@stripe/stripe-js";
+import { CheckoutProvider, Elements, PaymentElement } from "@stripe/react-stripe-js";
+import PaymentForm from './PaymentForm';
+const stripe = loadStripe('');
 const ProductDetails = () => {
-  const { id } = useParams();
+  const [clientSecret, setClientSecret] = useState(null);
+  const { slug } = useParams();
   const navigate = useNavigate();
   const [activeImage, setActiveImage] = useState(0);
-
+  const [productData, setProductData] = useState({})
+  useEffect(()=>{
+    (async()=>{
+      const data = await productServices.productDetails(slug)
+      setProductData(data);
+    })()
+  },[])
   // Mock product data
   const product = {
     id: 1,
@@ -60,10 +71,31 @@ const ProductDetails = () => {
       </span>
     );
   };
-
+ const handelOrder = async ()=>{
+  const data = await productServices.createOrder(productData)
+  setClientSecret(data.clientSecret);
+  stripe
+          .redirectToCheckout({
+            sessionId: data.clientSecret,
+          })
+  // console.log(data.clientSecret);
+  
+ }
+  const options = {
+        clientSecret,
+        theme: "stripe",
+    };
   return (
     <div className="space-y-6">
       {/* Header */}
+      {
+        clientSecret && (
+            <CheckoutProvider stripe={stripe} options={{clientSecret}}>
+      <PaymentElement />
+      <button>Submit</button>
+    </CheckoutProvider>
+        )
+      }
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <button
@@ -123,8 +155,8 @@ const ProductDetails = () => {
               </div>
             </div>
           </div>
+         <button onClick={handelOrder} className='py-2 px-4 bg-green-600 rounded-2xl mt-2 text-white'>Order Now</button>
         </div>
-
         {/* Product Info */}
         <div className="space-y-6">
           {/* Basic Info */}
